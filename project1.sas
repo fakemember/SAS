@@ -668,3 +668,5 @@ RUN;
 proc print data= table12;
 run;
 /* 10 VERY COMPETENT; 1 NOT COMPTENT */
+proC PRINT DATA = TABLE17;
+RUN;
