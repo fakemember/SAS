@@ -666,4 +666,7 @@ PROC FREQ data=table25;
 	EXACT FISHER;
 RUN;
 
+
+proc print data= table12;
+run;
 /* 10 VERY COMPETENT; 1 NOT COMPTENT */
