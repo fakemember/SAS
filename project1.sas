@@ -95,8 +95,7 @@ HK 5 30
 HK 6 33
 ;
 
-PROC PRINT;
-RUN;
+
 
 PROC NPAR1WAY DATA=table11 WILCOXON;
 	CLASS CITY;
@@ -666,4 +665,7 @@ PROC FREQ data=table25;
 	EXACT FISHER;
 RUN;
 
+
+proc print data= table12;
+run;
 /* 10 VERY COMPETENT; 1 NOT COMPTENT */
