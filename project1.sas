@@ -25,6 +25,7 @@ run;
 /*certification*/
 data table11;
 input city$ num fq;
+CARDS;
 sb 1 3
 sb 3 7
 sb 2 9
@@ -37,4 +38,5 @@ class city;
 var num;
 freq fq;
 run;
+
 
