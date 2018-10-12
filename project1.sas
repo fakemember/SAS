@@ -38,3 +38,11 @@ var num;
 freq fq;
 run;
 
+
+
+proc freq data=table11;
+table city*num/chisq or;
+weight fq;
+exact fisher;
+run;
+
