@@ -40,3 +40,13 @@ freq fq;
 run;
 
 
+<<<<<<< HEAD
+=======
+
+proc freq data=table11;
+table city*num/chisq or;
+weight fq;
+exact fisher;
+run;
+
+>>>>>>> 323c11d902f968301d6dcf8555fa9da45275224d
