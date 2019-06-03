@@ -32,6 +32,31 @@ d6=week('07aug2014'd);
 put d1= d2= d3= d4= d5= d6=;
 
 data _null_;
+d1=hour('14:45:32'T);
+d2=minute('14:45:32'T);
+d3=second('14:45:32'T);
+d4=hour('17OCT1991:14:45:32'DT);
+d5=minute('17OCT1991:14:45:32'DT);
+d6=second('17OCT1991:14:45:32'DT);
+d7=datepart('17OCT1991:14:45:32'DT);
+d8=timepart('17OCT1991:14:45:32'DT);
+put d1= d2= d3= d4= d5= d6= d7= d8=;
 
+
+data b;
+   WeddingDay='14feb2000'd;
+   Today=today();
+   YearsMarried=INTCK('YEAR',WeddingDay,today(),'C');
+   format WeddingDay Today date9.;
+run;
+proc print data=b;
+run;
+
+data _null_;
+   days=intck('dtday', '01aug2011:00:10:48'dt, '01feb2012:00:10:48'dt);
+   put days=;
+run;
+
+%put &systime;
 
 
