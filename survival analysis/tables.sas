@@ -749,8 +749,8 @@ data flat;
   if count2 not in (.,0) then
     col2 = put(count2,3.) || " (" || put(count2/&n2*100,5.1) || "%)";
   
-  if sum(count1,count2,count3)>0 then
-    output;
+  if sum(count1,count2,count0)>0 then
+    output;/*output is before the increase of section*/
   if last.aedecod then
     section + 1;
 run;
