@@ -1,168 +1,67 @@
-**how to customize the legend;
-https://blogs.sas.com/content/iml/2018/12/03/tips-customize-legends-proc-sgplot.html
-**What is the difference between categories and groups in PROC SGPLOT? ;
-https://blogs.sas.com/content/iml/2012/08/22/categories-vs-groups-in-proc-sgplot.html
-**Tips and Tricks for Clinical Graphs using ODS Graphics;
-https://support.sas.com/resources/papers/proceedings11/281-2011.pdf
-
-
-**use inset in sgplot;
-proc sgplot data=sashelp.class;
- scatter x=weight y=height;
- inset "This is some important information"
- "in the bottom-right corner" /
- position=BottomRight;
- inset ("A"="37" "B"="209" "C"="Value") /
- position=TopLeft border;
+proc format;
+   value trtpn
+      1 = "Active"
+      2 = "Placebo"; 
+      
+      
+      data ADTTE;
+label TRTA  = "Actual Treatment"
+      AVAL   = "Analysis Value"
+      CNSR   = "Censor";
+input TRTA $ AVAL CNSR @@;
+datalines;
+A  52    0     A  825   1     C  693   1     C  981   1
+B  279   0     B  826   1     B  531   1     B  15    1
+C  1057  1     C  793   1     B  1048  1     A  925   1
+C  470   1     A  251   0     C  830   1     B  668   0
+B  350   1     B  746   1     A  122   0     B  825   1
+A  163   0     C  735   1     B  699   1     B  771   0
+C  889   1     C  932   1     C  773   0     C  767   1
+A  155   1     A  708   1     A  547   1     A  462   0
+B  114   0     B  704   1     C  1044  1     A  702   0
+A  816   1     A  100   0     C  953   1     C  632   1
+C  959   1     C  675   1     C  960   0     A  51    1
+B  33    0     B  645   1     A  56    0     A  980   0
+C  150   1     A  638   1     B  905   1     B  341   0
+B  686   1     B  638   1     A  872   0     C  1347  1
+A  659   1     A  133   0     C  360   1     A  907   0
+C  70    1     A  592   1     B  112   1     B  882   0
+A  1007  1     C  594   1     C  7     1     B  361   1
+B  964   1     C  582   1     B  1024  0     A  540   0
+C  962   1     B  282   1     C  873   1     C  1294  1
+B  961   1     C  521   1     A  268   0     A  657   1
+C  1000  1     B  9     0     A  678   1     C  989   0
+A  910   1     C  1107  1     C  1071  0     A  971   1
+C  89    1     A  1111  1     C  701   1     B  364   0
+B  442   0     B  92    0     B  1079  1     A  93    1
+B  532   0     A  1062  1     A  903   1     C  792   1
+C  136   1     C  154   1     C  845   1     B  52    1
+A  839   1     B  1076  1     A  834   0     A  589   1
+A  815   1     A  1037  1     B  832   1     C  1120  1
+C  803   1     C  16    0     A  630   1     B  546   1
+A  28    0     A  1004  1     B  1020  1     A  75    1
+C  1299  1     B  79    1     C  170   1     B  945   1
+B  1056  1     B  947   1     A  1015  1     A  190   0
+B  1026  1     C  128   0     B  940   1     C  1270  1
+A  1022  0     A  915   1     A  427   0     A  177   0
+C  127   1     B  745   0     C  834   1     B  752   1
+A  1209  1     C  154   1     B  723   1     C  1244  1
+C  5     1     A  833   1     A  705   1     B  49    1
+B  954   1     B  60    0     C  705   1     A  528   1
+A  952   1     C  776   1     B  680   1     C  88    1
+C  23    1     B  776   1     A  667   1     C  155   1
+B  946   1     A  752   1     C  1076  1     A  380   0
+B  945   1     C  722   1     A  630   1     B  61    0
+C  931   1     B  2     1     B  583   1     A  282   0
+A  103   0     C  1036  1     C  599   1     C  17    1
+C  910   1     A  760   1     B  563   1     B  347   0
+B  907   1     B  896   1     A  544   1     A  404   0
+A  8     0     A  895   1     C  525   1     C  740   1
+C  11    1     C  446   0     C  522   1     C  254   1
+A  868   1     B  774   1     A  500   1     A  27    1
+B  842   1     A  268   0     B  505   1     B  505   0
+; 
 run;
-
-
-
-ods escapechar='\';
-proc sgplot data=sashelp.class;
- reg x=weight y=height / clm cli;
- inset ("Y\{unicode bar}"="62.34"
- "R\{sup '2'}"="0.94"
- "\{unicode alpha}"=".05") /
- position=TopLeft border;
-run;
-
-
-**** CREATE SCATTER PLOT;
-proc sgplot
-  data=adlb;
-  scatter x = aval
-          y = base / group=trtp;
-  xaxis values = (30 35 40 45) minorcount=4;
-  yaxis values = (30 35 40 45) minorcount=4;
-  lineparm x=30 y=30 slope=1;
-title1 "Hematocrit (%) Scatter Plot";
-title2 "At Visit 3";
-run;
-**** PRODUCE LINE PLOT;
-proc sgplot 
-  data=adeff;
-                                         
-   series x=avisitn y=aval / group=trtpn markers 
-          name="customlegend" legendlabel="Treatment";
-                                                                                
-   refline 1 / axis=x;                                                                                                               
-   yaxis values=(0 to 10 by 1)  
-         display=(noticks)
-         label='Mean Clinical Response';     
-                                                           
-   xaxis values=(0 to 10 by 1) 
-         label='Visit';               
-
-   keylegend "customlegend" / location=inside position=topright;                                
-
-   format avisitn avisitn.
-          trtpn trtpn.;
-
-   title1 "Mean Clinical Response by Visit";                                         
-run;    
-
-****  PRODUCE THE VERTICAL BAR CHART;
-proc sgpanel
-  data=freqout
-  cycleattrs
-  noautolegend;
-
-  **** PANEL BY TREATMENT;  
-  panelby trtpn /layout=columnlattice novarname onepanel colheaderpos=bottom;
-  styleattrs  
-     datacolors=(white gray black) ;
-
-  **** CREATE VERICAL BARS;
-  vbarparm category=avalcat1 response=percent / datalabel group=trtpn;
-
-  rowaxis values=(0 to 50 by 10) label="Percentage of Patients";   
-                                                            
-  colaxis label="Pain Score" labelpos=right;            
-
-  format percent newpct. trtpn trtpn. avalcat1 avalcat.;
-
-  title1 "Summary of Pain Score by Treatment";         
-run;    
-**** CREATE BOX PLOT;
-proc sgplot
-  data=adseiz;
-
-  vbox aval /category=avisitn group=trtpn 
-             nofill capshape=line connect=median 
-             grouporder=ascending extreme nooutliers;
-
-  xaxis label='Visit';
-  yaxis values = (1 to 4 by 1) minorcount=3 label='Seizures per Hour';        
-
-  format trtpn trtpn. avisitn avisitn.;
-  label trtpn = "Treatment";
-
-  title1 "Seizures Per Hour by Treatment";  
-  footnote1 j=l "Box extends to 25th and 75th percentile. Whiskers extend to"
-                " minimum and maximum values. Mean values are represented by"
-                " a dot while medians are connected by the line.";   
-run;    
-
-
-**** PRODUCE ODDS RATIO PLOT;
-proc sgplot 
-  data=odds
-  noautolegend;
-                                         
-   scatter y=y x=oddsratioest / xerrorupper=uppercl xerrorlower=lowercl 
-           errorbarattrs=(thickness=2.5 color=black)
-           markerattrs=graphdata1(size=0);             
-   scatter y=y x=oddsratioest /  
-           markerattrs=graphdata1(symbol=circlefilled color=black size=8); 
-                                                                                
-   refline 1 / axis=x;                                                                                                               
-   yaxis values=(1 to 4 by 1)  
-         display=(noticks nolabel);     
-                                                           
-   xaxis type=log logbase=2 values=(0.125 0.25 0.5 1 2 4 8 16) 
-         label='Odds Ratio and 95% Confidence Interval' ;                                               
-
-   format y effect.;
-
-   title1 "Odds Ratios for Clinical Success";                                         
-run;    
-
-
-
-**** PRODUCE KAPLAN MEIER PLOT;
-ods output survivalplot=survivalplot;
-proc lifetest
-   data=addeath plots=(survival);
-    
-   time aval * cnsr(1);
-   strata trtp;
-run;
-ods output close;
-
-proc sgplot
-  data=survivalplot;
-
-  step x=month y=survival /group=stratum;
-  
-  xaxis values = (0 to 48 by 6) minorcount=1 label='Months from Randomization';
-  yaxis values = (0 to 1 by 0.1) minorcount=1 label='Survival Probability';
-
-label stratum = "Treatment";
-format stratum $trtp.;
-title1 "Kaplan-Meier Survival Estimates for Death";
-run;
-
-**waterfall plot;
-proc sgplot data=waterfall;
-refline -0.3 /axis=y lineattrs=(pattern=shortdash);
-vbar position /response=response group=recist;
-xaxis label='Patient Number' fitpolicy=thin;
-yaxis label='Change from baseline (%)' values=(-1 to 1 by 0.2) valueshint;
-keylegend /location=inside down=2;
-run;
-
-
 
 
 
@@ -212,7 +111,7 @@ run;
      run; 
 
      proc sql noprint; 
-       select put(max(0,time-0.0000000001),15.10) into: _timelist separated by " "
+       select put(max(0,time-0.0000000001),15.10) into :_timelist separated by " "
        from maxpfs_mon
         ;
      quit; 
@@ -227,6 +126,13 @@ run;
          time PFS_MON*CNSR(1);
          strata trtpn;
      run;
+
+data kmsurv(rename=(survival2=survival));
+set kmsurv;
+retain survival2;
+if survival ne . then survival2=survival;
+drop survival;
+
 
 
 	 *-----------------------------------------------------------*;
@@ -249,7 +155,7 @@ run;
       data hratio2(keep=hratio );
          set hratio(where=(upcase(PARAMETER)="TRTPN"));
          length hratio $200;
-         hratio= strip(put(trtpn,trtpn.))||" = "||strip(coalescec(put(hazardratio,6.3),"NE"))||
+         hratio= "Hazard Ratio"||" = "||strip(coalescec(put(hazardratio,6.3),"NE"))||
 			                 " ["||coalescec(strip(put(HRLowerCL,6.3)),"NE")||" ; "||
                                    coalescec(strip(put(HRUpperCL,6.3)),"NE")||"]"; 
        run;
@@ -264,37 +170,58 @@ run;
          strata trtpn;
      run;
 
+
+
+     
+data  _trt;
+input trt $ trtpn;
+cards;
+0 0
+1 1
+1 2
+;
+
+data kmmed2;
+length est lower upper $8;
+set kmmed2;
+if estimate eq . then est ='NE';
+else est=put(estimate,6.3);
+if LowerLimit eq . then lower ='NE';
+else lower=put(LowerLimit,6.3);
+if UpperLimit eq . then upper ='NE';
+else upper=put(UpperLimit,6.3);
+
      **format the medians as the same with the shell**;
-     data perc1(keep=trt subgrp trtpn kmmed );
+     data perc1(keep=trt  trtpn kmmed );
         merge kmmed2(where=(percent = 50 ))
               _trt;
-        by subgrp trtpn;
+        by  trtpn;
         length kmmed $200;         
         if trt ne "0" then 
-                        kmmed=strip(put(trt,trt.))||" : "||strip(coalescec(put(estimate,5.2),"NE"))||
-						" ["||coalescec(strip(put(LowerLimit,6.2)),"NE")||"; "||
-                             coalescec(strip(put(UpperLimit,6.2)),"NE")||"]"; 
+                        kmmed=strip(put(trtpn,trtpn.))||" : "||strip(est)||
+						" ["|| strip(lower)||"; "||
+                              strip(upper)||"]"; 
         else if trt eq "0" then kmmed="Kaplan-Meier Medians [95% C.I.]";
      run;
 
      /**Censoring Times**/
-     proc sort data=censinfo; by subgrp trtpn; run;
-     data censinfo2(keep=trt subgrp trtpn centime);
+     proc sort data=censinfo; by  trtpn; run;
+     data censinfo2(keep=trt trtpn centime);
         merge censinfo
               _trt;
-        by subgrp trtpn;
+        by  trtpn;
 		if trt in (0 1 2 3 4 );
-        if trt ne "0" then centime="    "||strip(put(trt,trt.))||" (N = "||strip(put(total,3.))||")";
+        if trt ne "0" then centime="    "||strip(put(trtpn,trtpn.))||" (N = "||strip(put(total,3.))||")";
         else centime="Censoring Times ";
      run;
 
 	  /**Number of Events**/
-     data events (keep=trt subgrp trtpn evetime);
+     data events (keep=trt  trtpn evetime);
         merge censinfo
               _trt;
-        by subgrp trtpn;
+        by  trtpn;
 		if trt in (0 1 2 3 4 );
-        if trt ne "0" then evetime=strip(put(trt,trt.))||" (N = "||strip(put(Failed,3.))||")";
+        if trt ne "0" then evetime=strip(put(trtpn,trtpn.))||" (N = "||strip(put(Failed,3.))||")";
         else evetime="No. of events ";
      run;     
 
@@ -303,14 +230,13 @@ run;
      *-----------------------------------------------------------*;
      *--Create annotation dataset Combine all stats information--*;
      *-----------------------------------------------------------*;
-     data annotate1(keep=trt subgrp trtpn function text x y xsys ysys position angle size line color) ;
+     data annotate1(keep=trt trtpn function text x y xsys ysys position angle size line color) ;
          set censinfo2(in=a)
 		     events   (in=b)
-             hratio3  (in=c)
+             hratio2 (in=c)
              perc1    (in=d) 
-             kmsurv2  (where=(_censor_=1)
+             kmsurv  (where=(_censor_=1)
                        in=e);
-		  by trt;
          length function $8 text $200;
           
          /**censor times*/;
@@ -318,15 +244,13 @@ run;
             ***text**;
             xsys="1"; ysys="1"; position="3"; angle=0; size=1; line=1; x=6; function="label";
             text=centime;
-            y=100-30-(input(trt,best.)*3);
+            y=100-30-(trtpn*3);
             output;
             **line**;
 			if trt ne "0" then do
                function='MOVE'; line=input(trt,3.); y=y+3; x=x; 
-                 if trt=1 then color="black";
-                 if trt=2 then color="red";
-                 if trt=3 then color="blue";
-                 if trt=4 then color="green";
+                 if trtpn=1 then color="black";
+                 if trtpn=2 then color="red";
                output;
                x = x-5;
                function='DRAW' ;
@@ -346,7 +270,7 @@ run;
             ***text**;
             xsys="1"; ysys="1"; position="3"; angle=0; size=1; line=1; x=6; function="label";
             text=evetime;
-            y=100-30-20-(input(trt,best.)*3);
+            y=100-30-15-(trtpn*3);
             output;
          end;
 
@@ -356,7 +280,7 @@ run;
              xsys="1"; ysys="1"; position="3"; angle=0; size=1; line=1; x=6; function="label";
 
              text=hratio;
-             y=100-30-20-20-(input(subgrp,best.)*3 );
+             y=100-30-15-10-3;
              output;
          end;
 
@@ -365,7 +289,7 @@ run;
             ***text**;
             xsys="1"; ysys="1"; position="3"; angle=0; size=1; line=1; x=6; function="label";
             text=kmmed;
-            y=100-30-20-10-25-(input(trt,best.)*3);
+            y=100-30-15-10-15-(trtpn*3);
             output;
          end;
 
@@ -373,7 +297,7 @@ run;
          if e then do;
             ***symbol**;
             xsys="2"; ysys="2"; position="3"; angle=0; size=1; line=1; function="symbol";
-            y=surv;
+            y=survival;
             x=PFS_MON;
             text="triangle";
             output;
@@ -393,25 +317,24 @@ run;
         cross join _trt as b
         order by trt, time;
      quit;
-     
+     %let boot=0.2;
     data atrisk(keep=trt function text x y xsys ysys position angle size line newtrt);   
-        set kmptrisk2(in=a)
+        set kmptrisk(in=a)
             incpfs_mon  (in=b)
             _trt(in=c) end=eof;
-        by trt;
         **flip treament to show Trt A first**;
-        newtrt=6-trt*2;
+        newtrt=6-trtpn*2;
         length function $8 text $200;
         if a then do;
            xsys="2"; ysys="3"; position="2"; angle=0; size=1.3; line=1; function="label"; x=timelist;
-           y=newtrt+(&nbfoot+6);
+           y=newtrt+(&boot+6);
            text=put(left,3.);
            output;
         end;
         if b then do;
            xsys="2"; ysys="3"; position="2"; angle=0; size=1.3; line=1; function="label";
            x=time;
-           y=6+(&nbfoot+6);
+           y=6+(&boot+6);
            text=put(time,3.);
            output;
         end;     
@@ -419,15 +342,15 @@ run;
            xsys="3"; ysys="3"; position="3"; angle=0; size=1.3; line=1; function="label";
            x=0;
            if trt ne "0" then do;
-              y=newtrt+(&nbfoot+6);
-              text=strip(put(trt,trt.));
+              y=newtrt+(&boot+6);
+              text=strip(put(trtpn,trtpn.));
               output;
            end;
            else do;            
-              y=8+(&nbfoot+6);
+              y=8+(&boot+6);
               text="Number of patients still at risk";
               output;
-              y=6+(&nbfoot+6);
+              y=6+(&boot+6);
               text="Time (Months)";
               output;
            end;
@@ -437,11 +360,8 @@ run;
      data annotate;
         set annotate1
             atrisk
-            footnote;
-        by trt;
-        length subgrpc $50;
-
-          subgrpc=subgrp;
+            ;
+     
      run;
 
 
@@ -488,12 +408,10 @@ run;
   **set up the curve**;
   symbol1 interpol = steplj h = 1 width=2 line=1 color = black value= none;
   symbol2 interpol = steplj h = 1 width=2 line=1 color = red value=none;
-  symbol3 interpol = steplj h = 1 width=2 line=1 color = blue value=none;
-  symbol4 interpol = steplj h = 1 width=2 line=1 color = green value=none;
 
   **generate the plot**;
-        proc gplot data = kmsurv2;
-          plot surv * PFS_MON = trt / frame 
+        proc gplot data = kmsurv;
+          plot survival * PFS_MON = trtpn / frame 
                 haxis  = axis1
                 vaxis  = axis2
                 anno=annotate
@@ -502,3 +420,10 @@ run;
         quit;
 
     ods rtf close;
+
+
+
+     proc lifetest data=km1 method=KM conftype=loglog plots=survival;
+         time PFS_MON*CNSR(1);
+         strata trtpn;
+     run;
