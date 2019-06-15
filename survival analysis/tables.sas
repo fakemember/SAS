@@ -957,3 +957,135 @@ ods pdf close;
 
 
 
+
+/* data ADSL; */
+/* length USUBJID $ 3; */
+/* label USUBJID = "Unique Subject Identifier" */
+/*       TRTPN   = "Planned Treatment (N)"; */
+/* input USUBJID $ TRTPN @@; */
+/* datalines; */
+/* 101 1  102 0  103 0  104 1  105 0  106 0  107 1  108 1  109 0  110 1 */
+/* 111 0  112 0  113 0  114 1  115 0  116 1  117 0  118 1  119 1  120 1 */
+/* 121 1  122 0  123 1  124 0  125 1  126 1  127 0  128 1  129 1  130 1 */
+/* 131 1  132 0  133 1  134 0  135 1  136 1  137 0  138 1  139 1  140 1 */
+/* 141 1  142 0  143 1  144 0  145 1  146 1  147 0  148 1  149 1  150 1 */
+/* 151 1  152 0  153 1  154 0  155 1  156 1  157 0  158 1  159 1  160 1 */
+/* 161 1  162 0  163 1  164 0  165 1  166 1  167 0  168 1  169 1  170 1 */
+/* ; */
+/* run; */
+/*  */
+/* **** INPUT SAMPLE CONCOMITANT MEDICATION DATA AS SDTM CM DOMAIN.; */
+/* data CM; */
+/* label USUBJID = "Unique Subject Identifier" */
+/*       CMDECOD = "Standardized Medication Name"; */
+/* input USUBJID $ 1-3 CMDECOD $ 5-27; */
+/* datalines; */
+/* 101 ACETYLSALICYLIC ACID    */
+/* 101 HYDROCORTISONE          */
+/* 102 VICODIN                 */
+/* 102 POTASSIUM               */
+/* 102 IBUPROFEN               */
+/* 103 MAGNESIUM SULFATE       */
+/* 103 RINGER-LACTATE SOLUTION */
+/* 115 LORAZEPAM               */
+/* 115 SODIUM BICARBONATE      */
+/* 116 POTASSIUM               */
+/* 117 MULTIVITAMIN            */
+/* 117 IBUPROFEN               */
+/* 119 IRON                    */
+/* 130 FOLIC ACID              */
+/* 131 GABAPENTIN              */
+/* 132 DIPHENHYDRAMINE         */
+/* 135 SALMETEROL              */
+/* 140 HEPARIN                 */
+/* 140 HEPARIN                 */
+/* 140 NICOTINE                */
+/* 141 HYDROCORTISONE          */
+/* 141 IBUPROFEN               */
+/* ; */
+/*  */
+/*  */
+/* **** PERFORM A SIMPLE COUNT OF EACH TREATMENT ARM AND OUTPUT RESULT; */
+/* **** AS MACRO VARIABLES.  N1 = 1ST COLUMN N FOR ACTIVE THERAPY, */
+/* **** N2 = 2ND COLUMN N FOR PLACEBO, N3 REPRESENTS THE 3RD COLUMN TOTAL N.; */
+/* proc sql noprint; */
+/*  */
+/*    **** PLACE THE NUMBER OF ACTIVE SUBJECTS IN &N1.; */
+/*    select count(distinct usubjid) format = 3. */
+/*       into :n1  */
+/*       from adsl */
+/*       where trtpn = 1; */
+/*    **** PLACE THE NUMBER OF PLACEBO SUBJECTS IN &N2.; */
+/*    select count(distinct usubjid) format = 3. */
+/*       into :n2  */
+/*       from adsl */
+/*       where trtpn = 0; */
+/*    **** PLACE THE TOTAL NUMBER OF SUBJECTS IN &N3.; */
+/*    select count(distinct usubjid) format = 3. */
+/*       into :n3  */
+/*       from adsl */
+/*       where trtpn ne .; */
+/* quit; */
+/*  */
+/* ***** MERGE CCONCOMITANT MEDICATIONS AND TREATMENT DATA. */
+/* ***** KEEP RECORDS FOR SUBJECTS WHO HAD CONMEDS AND TOOK STUDY THERAPY. */
+/* ***** GET UNIQUE CONCOMITANT MEDICATIONS WITHIN PATIENTS.; */
+/* proc sql */
+/*    noprint; */
+/*    create table cmtosum as */
+/*       select unique(c.cmdecod) as cmdecod, c.usubjid, t.trtpn */
+/*          from cm as c, adsl as t */
+/*          where c.usubjid = t.usubjid */
+/*          order by usubjid, cmdecod; */
+/* quit; */
+/*  */
+/* proc sql; */
+/* select count(unique(usubjid)) into :n0 from adsl where trtpn=0; */
+/* select count(unique(usubjid)) into :n1 from adsl where trtpn=1; */
+/* select count(unique(usubjid)) into :nt from adsl ; */
+/* quit; */
+/*  */
+/* ods output crosstabfreqs=counts; */
+/* proc freq data=cmtosum; */
+/* tables cmdecod*trtpn; */
+/*  */
+/* data counts; */
+/* set counts; */
+/* if trtpn=. then trtpn=2; */
+/* proc sort data=counts; */
+/* by cmdecod trtpn; */
+/* proc transpose data=counts prefix=col out=c1; */
+/* by cmdecod; */
+/* id trtpn; */
+/* var frequency; */
+/*  */
+/* data c1; */
+/* set c1; */
+/* length l0-l2 $30 label $30; */
+/* l1=put(col1,3.)||'('||put(col1/&n1*100,2.)||'%)'; */
+/* l0=put(col0,3.)||'('||put(col0/&n0*100,2.)||'%)'; */
+/* l2=put(col2,3.)||'('||put(col2/&nt*100,2.)||'%)'; */
+/* if cmdecod eq '' then DO ; */
+/* label='ANY MEDICATION'; */
+/* SEC=1; */
+/* END; */
+/* ELSE DO; */
+/* LABEL=CMDECOD; */
+/* SEC=2; */
+/* END; */
+/*  */
+/*  */
+/*  */
+/* PROC REPORT DATA=c1 split='|'; */
+/* COLUMN SEC LABEL L0 L1 L2; */
+/* DEFINE SEC/ GROUP NOPRINT ; */
+/* DEFINE LABEL/DISPLAY '|Preferred Medication Term'; */
+/* define l0/display "Active|N=&n0"; */
+/* define l1/display "Placebo|N=&n1"; */
+/* define l2/display "Overall|N=&nt"; */
+/* compute after sec; */
+/* line ' '; */
+/* endcomp; */
+/*  */
+/*  */
+/*  */
