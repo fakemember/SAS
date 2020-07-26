@@ -1,9 +1,11 @@
+/* 
 **how to customize the legend;
 https://blogs.sas.com/content/iml/2018/12/03/tips-customize-legends-proc-sgplot.html
 **What is the difference between categories and groups in PROC SGPLOT? ;
 https://blogs.sas.com/content/iml/2012/08/22/categories-vs-groups-in-proc-sgplot.html
 **Tips and Tricks for Clinical Graphs using ODS Graphics;
-https://support.sas.com/resources/papers/proceedings11/281-2011.pdf
+https://support.sas.com/resources/papers/proceedings11/281-2011.pdf 
+*/
 
 
 **use inset in sgplot;
@@ -18,12 +20,12 @@ run;
 
 
 
-ods escapechar='\';
+ods escapechar='^';
 proc sgplot data=sashelp.class;
  reg x=weight y=height / clm cli;
- inset ("Y\{unicode bar}"="62.34"
- "R\{sup '2'}"="0.94"
- "\{unicode alpha}"=".05") /
+ inset ("Y^{unicode bar}"="62.34"
+ "R^{sup '2'}"="0.94"
+ "^{unicode alpha}"=".05") /
  position=TopLeft border;
 run;
 
@@ -39,6 +41,8 @@ proc sgplot
 title1 "Hematocrit (%) Scatter Plot";
 title2 "At Visit 3";
 run;
+
+
 **** PRODUCE LINE PLOT;
 proc sgplot 
   data=adeff;
@@ -84,6 +88,8 @@ proc sgpanel
 
   title1 "Summary of Pain Score by Treatment";         
 run;    
+
+
 **** CREATE BOX PLOT;
 proc sgplot
   data=adseiz;
@@ -161,11 +167,6 @@ xaxis label='Patient Number' fitpolicy=thin;
 yaxis label='Change from baseline (%)' values=(-1 to 1 by 0.2) valueshint;
 keylegend /location=inside down=2;
 run;
-
-
-
-
-
 
 
 
@@ -1409,9 +1410,9 @@ ods output close;
 data est;
    set est;
    select(parameter);
-      when("%scan(&invar,1)") y = 1;
+      when("%scan(&invar,1)")     y = 1;
       when("%scan(&invar,2)")     y = 2;
-      when("%scan(&invar,3)")    y = 3;
+      when("%scan(&invar,3)")     y = 3;
       otherwise;
    end;
 run;
