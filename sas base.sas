@@ -1,4 +1,5 @@
 options pageno=1;
+
 data inventory;
 input idnum 5. @10 price;
 cards;
@@ -85,9 +86,7 @@ cards;
 4
 5
 ;
-
-
-options pageno=1;
+run;
 
 
 
@@ -106,6 +105,8 @@ RANCH,1500,3,3,Kemble Avenue,"$86,650"
 SPLIT,1615,4,3,West Drive,"94,450"
 SPLIT,1305,3,1.5,Graham Avenue,"$73,650"        
 ;
+run;
+
 
 data scores;
    infile datalines dsd;
@@ -115,6 +116,7 @@ Smith,12,22,46,"Green Hornets, Atlanta",AAA
 Mitchel,23,19,25,"High Volts, Portland",AAA 
 Jones,09,17,54,"Vulcans, Las Vegas",AA 
 ; 
+run;
 
 proc print data=scores noobs; 
 run;
@@ -124,6 +126,7 @@ data male female;
 set sashelp.class;
 if sex='M' then output male;
 else output female;
+run;
 
 
 
@@ -131,12 +134,14 @@ data class;
 set male(in=inm)
 female(in=inf);
 if inm and inf;
+run;
 
 %let path=/folders/myfolders/ecsql193;
 libname orion "&path";
 
 proc datasets lib=sashelp;
 contents data=class varnum ; 
+run;
 
 
 data group;
@@ -175,6 +180,7 @@ data _null_;
 set class;
 file "path";
 put sex weight;
+run;
 
 
 data work.flights;
@@ -210,7 +216,6 @@ run;
 
 
 data work.clients;
- 
     do while (calls le 6);
         calls + 1;
     end;
@@ -247,6 +252,7 @@ sw 6 np1 40    sw 6 p1 350   sw 6 np2 225   sw 6 p2 80
 ne 7 np1 90    ne 7 p1 190   ne 7 np2 420   ne 7 p2 86
 ne 8 np1 200   ne 8 p1 300   ne 8 np2 420   ne 8 p2 125
 ;
+run;
 
 proc format ;
    value $sctrfmt 'se' = 'Southeast'
