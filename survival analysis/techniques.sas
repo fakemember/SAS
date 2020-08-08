@@ -1,3 +1,83 @@
+/* fisher exact test and freq count by group */
+%macro freq_fisher(indata=, class=, label=, var=, value=);
+	data &indata;
+		set &indata;
+
+		if &var="&value" then
+			&var._=1;
+		else
+			&var._=0;
+
+		if &var='' then
+			&var._=.;
+	run;
+
+	proc freq data=&indata;
+		ods output FishersExact=pvalue&var;
+		tables &class*&var._/fisher out=freq&var;
+	run;
+
+	data pvalue&var;
+		length _name_ $150;
+		set pvalue&var;
+		where name1='XP2_FISH';
+		pvalue=put(nvalue1, pvalue8.4);
+		_name_="&label";
+	run;
+
+	proc sql;
+		create table freq&var
+as select a.*, sum(count) as total from freq&var as a group by &class;
+	quit;
+
+	data freq&var;
+		set freq&var;
+		where &var._=1;
+		percent_=put(count/total, 
+			percent7.1)||' ('||strip(count)||'/'||strip(total)||')';
+	run;
+
+	proc transpose data=freq&var out=&var.1;
+		id &class;
+		var percent_;
+	run;
+
+	data &var.2;
+		length _name_ $150;
+		merge &var.1 pvalue&var;
+	run;
+
+%mend;
+
+%freq_fisher(indata=, class=, label=, var=, value=);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 *** creat macro  ;
 %let name=alice;
 
