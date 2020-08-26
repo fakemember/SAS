@@ -80,7 +80,7 @@ run;
 %macro printpt(usubjid);
   proc print
     data = dm;
-    where usubjid = “&usubjid”;
+    where usubjid = â€œ&usubjidâ€;
     var usubjid age sex race;
   run;
 %mend printpt;
@@ -179,8 +179,8 @@ ods pdf close;
 data endstudy;
   set endstudy;
   
-  if subjid = “101-1002” then
-    discterm = “Death”;
+  if subjid = â€œ101-1002â€ then
+    discterm = â€œDeathâ€;
 run;
 
 
@@ -219,7 +219,7 @@ proc sql;
       select * from connection to oracle_tables
       (select usubjid, aeterm, aestdtc, aedecod
          from AEORACLETABLE 
-         where query_clean=”YES”);
+         where query_clean=â€YESâ€);
 
    disconnect from oracletables;
 quit;
@@ -231,7 +231,7 @@ libname oratabs oracle user=USERNAME
 
 data adverse;
    set oratabs.AEORACLETABLE;
-      where query_clean = “YES”;
+      where query_clean = â€œYESâ€;
       keep usubjid aeterm aestdtc aedecod; 
 run;
 
@@ -477,9 +477,9 @@ ods html close;
 
 **** PROGRAM 4.2;
 if adt < rfstdt then
-  ADY = adt – rfstdt;
+  ADY = adt â€“ rfstdt;
 else if adt >= rfstdt then
-  ADY = adt – rfstdt + 1;
+  ADY = adt â€“ rfstdt + 1;
 
 
 **** PROGRAM 4.3;
@@ -999,7 +999,7 @@ run;
 **** PROGRAM 4.11;
 proc sort
    data = whodrug(keep = seq1 seq2 drug_name drugrecno
-                  where = (seq1 = ‘01’ and seq2 = ‘001’) )
+                  where = (seq1 = â€˜01â€™ and seq2 = â€˜001â€™) )
           nodupkey;
       by drugrecno drug_name;
 run;
