@@ -1,3 +1,15 @@
+ *---------------------------------------------------------------*;
+* %find_last_contact generates last contact date for subjects across the forms.
+*
+* PARAMETERS:
+*            lib = libname
+*        id = for Syncrony usually is SubjectId
+*
+* Notice:1. variables should be manually selected based on CRF. 
+*           AE repoted/aware date and pd report date should not be used.
+*        2. We should only used dates from Core Lab date and EDC data. Don't include CEC data.
+*        3.    
+*---------------------------------------------------------------*;
 libname impdata '/home/chaocheng0/Impdata';
 
 proc sql;

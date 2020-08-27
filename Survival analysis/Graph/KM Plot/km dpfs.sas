@@ -765,3 +765,11 @@ ods rtf text="";
 
 ods rtf close;
 ods listing;
+
+
+proc template;
+   delete Stat.Lifetest.Graphics.ProductLimitSurvival  /
+          store=sasuser.templat;
+   delete Stat.Lifetest.Graphics.ProductLimitSurvival2 /
+          store=sasuser.templat;
+run;
