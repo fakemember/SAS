@@ -10,8 +10,9 @@
 *        2. We should only used dates from Core Lab date and EDC data. Don't include CEC data.
 *        3.    
 *---------------------------------------------------------------*;
-libname impdata '/home/chaocheng0/Impdata';
+libname impdata '/home/chaocheng0/Impdata';*change library path;
 
+/* manually select variables based on CRF page */
 proc sql;
 	create table temp as select * from dictionary.columns where libname='IMPDATA' 
 		and name not in ('DateChanged', 'DateCreated') and (upcase(name) like '%DT%' 

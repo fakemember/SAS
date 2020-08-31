@@ -1,4 +1,4 @@
-*******************************
+*******************************;
 *%drive imports all files with specified extension at one time.
 *parameter:
 *          dir: file directory 
@@ -6,9 +6,7 @@
 *          lib: library name  
 *output: SAS dataset
 *author: Chao Cheng
-*******************************
-
-
+*******************************;
 *options mprint symbolgen mlogic;
 
 %macro drive(dir,ext,lib); 
@@ -33,13 +31,16 @@
 %if %length(&outfname)>30 %then %let outfname=%substr(&outfname,%length(&outfname)-30);
 
 %put %qsysfunc(dread(&did,&i));  
-          proc import datafile="&dir\%qsysfunc(dread(&did,&i))" out=&lib..
+          proc import datafile="&dir\%qsysfunc(dread(&did,&i))" out=
+
+
 %if %index(&outfname,-)>0 %then %do;
- %sysfunc(translate(&outfname,_,-))
- %end;
-%else %do;
-&outfname
+&lib..%sysfunc(translate(&outfname,_,-))
 %end;
+%else %do;
+&lib..&outfname
+%end;
+
              dbms=&ext replace;
 %if &ext=csv %then %do;             
 guessingrows=max; 
@@ -55,4 +56,5 @@ guessingrows=max;
              
  %mend drive;
  
-*%drive(Z:\Chao Cheng\2020.08,csv,impdata);
+*%drive(Z:\Chao Cheng\2020.08,csv,work);
+*%drive(Z:\Chao Cheng\2020.08,xlsx,xlsx);
